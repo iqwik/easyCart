@@ -12,6 +12,7 @@
   
   <h3>Сборка проекта:</h3>
     
+    npm install
     npm run build --production
     
  
@@ -20,6 +21,9 @@
   #Использование:
   
   <ul>
-  <li>Добавить data-аттрибуты в верстке товара (data-id (int), data-image (str), data-name (str), data-count (bool), data-price(str||int))</li>
+  <li>
+    Добавить data-аттрибуты в верстке товара<br/> 
+    - data-id (int), data-image (str), data-name (str), data-count (bool), data-price(str||int)
+  </li>
   <li>Передать в конструктор ссылку на файл обработки данных на бэкенде</li>
   </ul>
