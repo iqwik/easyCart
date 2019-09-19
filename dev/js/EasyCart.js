@@ -5,7 +5,12 @@ import dataAttributesNames from './functions/dataAttributesNames';
 import dataAttributesValues from './functions/dataAttributesValues';
 
 export default class EasyCart {
-    constructor(source, productWrap = 'product__wrap', addToCartBtn = 'addtocart', wrapperCartID = 'counterCart', modalClass = 'modal', modalClasses = {}) {
+    constructor(source, 
+                productWrap = 'product__wrap', 
+                addToCartBtn = 'addtocart',
+                wrapperCartID = 'counterCart',
+                modalClass = 'modal',
+                modalClasses = {}) {
         this.source = source;
         this.productWrap = productWrap;
         this.addToCartBtn = addToCartBtn;
