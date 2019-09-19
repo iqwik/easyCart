@@ -1,3 +1,9 @@
+import getParentElement from './functions/getParentElement';
+import renderModal from './functions/renderModal';
+import totalAmount from './functions/totalAmount';
+import dataAttributesNames from './functions/dataAttributesNames';
+import dataAttributesValues from './functions/dataAttributesValues';
+
 export default class EasyCart {
     constructor(source, productWrap = 'product__wrap', addToCartBtn = 'addtocart', wrapperCartID = 'counterCart', modalClass = 'modal', modalClasses = {}) {
         this.source = source;
@@ -47,7 +53,7 @@ export default class EasyCart {
         allBtnsAddToCart.forEach(button => {
             button.addEventListener('click', (e) => {
                 e.preventDefault();
-                let parentElem = this._getParentElement(e.target, this.productWrap);
+                let parentElem = getParentElement(e.target, this.productWrap);
                 if(typeof parentElem !== 'undefined') {
                     this._getDataAttributes(parentElem);
                     this._updateCart();
@@ -55,84 +61,11 @@ export default class EasyCart {
             });
         });
     }
-    _getParentElement(targetElem, parentSelector) {
-        let parents = document.querySelectorAll(`.${parentSelector}`);
-        for (let i = 0; i < parents.length; i++) {
-            let parent = parents[i];
-            if (parent.contains(targetElem)) {
-                return parent;
-            }
-        }
-        return 'undefined';
-    }
-    _getDataAttributes(parentElement){
-        this._getDataAttributesNames(parentElement);
-        this._getDataAttributesValues(parentElement);
-    }
-    _getDataAttributesNames(parentElement){
-        if(typeof parentElement.dataset.id !== 'undefined'){
-            if(this.dataAttributesNames.indexOf('id') === -1){
-                this.dataAttributesNames.push('id');
-            }
-        }
-        let childs = parentElement.childNodes;
-        childs.forEach(elem => {
-            if(elem.childNodes.length > 0){
-                this._getDataAttributesNames(elem);
-            }
-            for (let prop in elem.dataset) {
-                if(this.dataAttributesNames.indexOf(prop) === -1){
-                    this.dataAttributesNames.push(prop);
-                }
-            }
-        });
-    }
-    _getDataAttributesValues(parentElem, dataAttribute){
-        this.dataAttributesNames.map(dataAttribute => {
-            if(dataAttribute === 'id'){
-                this.currentProduct['id'] = +parentElem.dataset[dataAttribute];
-            } else {
-                let item = parentElem.querySelector(`[data-${dataAttribute}]`);
-                if (dataAttribute === 'count'){
-                    this.currentProduct['count'] = item.dataset[dataAttribute] !== false ? +item.value : 1;
-                } else {
-                    this.currentProduct[dataAttribute] = item.dataset[dataAttribute];
-                }
-            }
-        });
-    }
-    _updateCart(){
-        let cart = this.cart;
-        let currentProd = this.currentProduct;
-        if(cart.ids.indexOf(currentProd.id) !== -1){
-            cart.items[currentProd.id].count += currentProd.count;
-        } else {
-            this.cart.ids.push(currentProd.id);
-            this.cart.items[currentProd.id] = currentProd;
-        }
-        this._updateTotalCount();
-        this._updateStorage();
-    }
-    _updateStorage(){
-        localStorage.cart = JSON.stringify(this.cart);
-        this.currentProduct = {};
-        this._renderCartCounter();
-    }
-    _updateTotalCount(){
-        this.cart.total += +this.currentProduct.count;
-    }
-    _updateTotalCountWhenRemove(){
-        let total = 0;
-        this.cart.ids.forEach(id => {
-            total += this.cart.items[id].count;
-        });
-        this.cart.total = total;
-    }
     _handleClickCartCounter(){
         const wrapperCart = document.getElementById(this.wrapperCartID);
         wrapperCart.addEventListener('click', (e) => {
             let modal = document.querySelector(`.${this.modalClass}`);
-            let html = this._renderModalContent();
+            let html = renderModal(this.modalClasses, this.cart);
             modal.innerHTML = html;
             modal.style.display = 'block';
             this._handleClickCloseModal();
@@ -140,19 +73,6 @@ export default class EasyCart {
             this._handleClickRemoveProduct();
             this._handleClickOnAcceptOrder();
         });
-    }
-    _renderModalContent(){
-        let html = `
-            <div class="${this.modalClasses.overlay}"></div>
-            <div class="${this.modalClasses.popup}">
-                <a href="#" class="${this.modalClasses.modalClose}">&times;</a>
-                <div class="${this.modalClasses.modalContent}">
-                    <div class="${this.modalClasses.modalHeader}">Ваша Корзина</div>
-                    <div class="${this.modalClasses.modalBody}">${this._renderProducts()}</div>
-                </div>
-            </a>
-        `;
-        return html;
     }
     _handleClickCloseModal() {
         let closeBtn = document.querySelector(`.${this.modalClasses.modalClose}`);
@@ -186,7 +106,7 @@ export default class EasyCart {
                 delete this.cart.items[id];
                 this._updateTotalCountWhenRemove();
                 this._updateStorage();
-                this._removeTR(e.target.parentElement);
+                e.target.parentElement.parentElement.remove();
                 this._updateTotalAmountAndCount();
             });
         });
@@ -215,54 +135,41 @@ export default class EasyCart {
             }
         });
     }
-    _removeTR(item){
-        item.parentElement.remove();
+    _getDataAttributes(parentElement){
+        dataAttributesNames(this.dataAttributesNames, parentElement);
+        dataAttributesValues(this.dataAttributesNames, this.currentProduct, parentElement);
     }
-    _renderProducts(){
-        let res = `
-            <table>
-                <thead>
-                    <tr>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                </thead>
-                <tbody>
-        `;
-        this.cart.ids.map(id => {
-            res += this._renderSingleProduct(this.cart.items[id]);
-        });
-        res += '</tbody></table>';
-        res += `<p class="${this.modalClasses.totalAmount}">Общая стоимость: ${this._totalAmount()}</p>`;
-        res += `<p class="${this.modalClasses.totalCount}">Общее кол-во: ${this.cart.total}</p>`;
-        res += `<button class="${this.modalClasses.acceptBtn}">Оформить заказ</button>`;
-        return res;
+    _updateCart(){
+        let cart = this.cart;
+        let currentProd = this.currentProduct;
+        if(cart.ids.indexOf(currentProd.id) !== -1){
+            cart.items[currentProd.id].count += currentProd.count;
+        } else {
+            this.cart.ids.push(currentProd.id);
+            this.cart.items[currentProd.id] = currentProd;
+        }
+        this._updateTotalCount();
+        this._updateStorage();
     }
-    _renderSingleProduct(product){
-        return `
-             <tr>
-                <td><img src="${product.image}" width="80" alt=""/></td>
-                <td><h4>${product.name}</h4></td>
-                <td><input type="number" value="${product.count}" max="10" min="1" data-prod="${product.id}" onkeypress="return false"/></td>
-                <td><p>${product.price} руб.</p></td>
-                <td><a href="#" class="${this.modalClasses.removeBtn}" data-id="${product.id}">удалить</a></td>
-            </tr>
-        `;
+    _updateStorage(){
+        localStorage.cart = JSON.stringify(this.cart);
+        this.currentProduct = {};
+        this._renderCartCounter();
     }
-    _totalAmount(){
-        let price = 0;
+    _updateTotalCount(){
+        this.cart.total += +this.currentProduct.count;
+    }
+    _updateTotalCountWhenRemove(){
+        let total = 0;
         this.cart.ids.forEach(id => {
-            price += (+this.cart.items[id].price * this.cart.items[id].count);
+            total += this.cart.items[id].count;
         });
-        return price;
+        this.cart.total = total;
     }
     _updateTotalAmountAndCount(){
         let modalAmount = document.querySelector(`.${this.modalClass} .${this.modalClasses.totalAmount}`);
         let modalCount = document.querySelector(`.${this.modalClass} .${this.modalClasses.totalCount}`);
-        modalAmount.innerHTML = `Общая стоимость: ${this._totalAmount()}`;
+        modalAmount.innerHTML = `Общая стоимость: ${totalAmount(this.cart)}`;
         modalCount.innerHTML = `Общее кол-во: ${this.cart.total}`;
     }
 }

@@ -2,11 +2,14 @@
   "name": "EasyCart",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "dev/index.js",
   "scripts": {
-    "start": "webpack --mode development",
     "build": "NODE_ENV=prod webpack --mode production",
-    "server": "webpack-dev-server"
+    "server": "webpack-dev-server --inline --hot --open"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/iqwik/easyCart.git"
   },
   "author": "Artem Zubarev",
   "license": "ISC",
