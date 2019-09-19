@@ -22,8 +22,85 @@
   
   <ul>
   <li>
-    Добавить data-аттрибуты в верстке товара<br/> 
-    - data-id (int), data-image (str), data-name (str), data-count (bool), data-price(str||int)
+    Добавить data-аттрибуты в верстке товара<br/><br/>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>data-id</td>
+          <td>integer</td>
+          <td>ID товара, желательно поставить в родительский div-обертку товара</td>
+        </tr>
+        <tr>
+          <td>data-image</td>
+          <td>string</td>
+          <td>Ссылка на картинку товара</td>
+        </tr>
+        <tr>
+          <td>data-name</td>
+          <td>string</td>
+          <td>Название товара</td>
+        </tr>
+        <tr>
+          <td>data-count</td>
+          <td>boolean</td>
+          <td>True - активировать возможность доавлять разное кол-во товара</td>
+        </tr>
+        <tr>
+          <td>data-price</td>
+          <td>string|integer</td>
+          <td>Стоимость товара</td>
+        </tr>
+      </tbody>
+    </table><br/>
   </li>
-  <li>Передать в конструктор ссылку на файл обработки данных на бэкенде</li>
+  <li>Передать в конструктор параметры<br/><br/>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Source</td>
+          <td>string</td>
+          <td>ссылку на файл обработки данных</td>
+        </tr>
+        <tr>
+          <td>productWrap</td>
+          <td>string</td>
+          <td>Класс обертки продукта</td>
+        </tr>
+        <tr>
+          <td>addToCartBtn</td>
+          <td>string</td>
+          <td>Класс кнопки "Добавить в корзину"</td>
+        </tr>
+        <tr>
+          <td>wrapperCartID</td>
+          <td>string</td>
+          <td>ID счетчика и вызова корзины при клике</td>
+        </tr>
+        <tr>
+          <td>modalClass</td>
+          <td>string</td>
+          <td>Класс модального окна</td>
+        </tr>
+        <tr>
+          <td>modalClasses</td>
+          <td>object</td>
+          <td>Объект содержащий классы всех блоков модального окна</td>
+        </tr>
+      </tbody>
+    </table><br/>
+  </li>
   </ul>
