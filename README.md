@@ -60,7 +60,7 @@
       </tbody>
     </table><br/>
   </li>
-  <li>Передать в конструктор параметры<br/><br/>
+  <li>Передать в конструктор параметры (необязательно)<br/><br/>
     <table>
       <thead>
         <tr>
@@ -71,7 +71,7 @@
       </thead>
       <tbody>
         <tr>
-          <td>Source</td>
+          <td>source</td>
           <td>string</td>
           <td>ссылку на файл обработки данных</td>
         </tr>
